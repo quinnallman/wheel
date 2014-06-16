@@ -81,7 +81,10 @@ var data = {
     width: 1000,
     height: 1000,
     angleOffset: 0,
+    speed: 0,
     colours: ["orange", "red", "yellow", "aqua", "fuchsia","lime"],
+    spinning: false,
+    spinInterval: 0,
 };
 
 function drawWheel(canvas) {
@@ -91,6 +94,11 @@ function drawWheel(canvas) {
         var gameArcLength = 2*Math.PI/numGames;
         var numColours = data.colours.length;
         var ctx = canvas.getContext('2d');
+
+        ctx.save();
+        ctx.translate(radius, radius);
+        ctx.rotate(data.angleOffset);
+        ctx.translate(-radius, -radius);
 
         for(var i = 0 ; i < numGames ; i++) {
             ctx.save();
@@ -116,10 +124,35 @@ function drawWheel(canvas) {
             ctx.fillText(data.games[i], radius - 10, 10);
             ctx.restore();
         }
+
+        ctx.restore();
     }
+}
+
+function update() {
+    data.angleOffset += data.speed;
+    data.speed -= Math.random() * 5 * 2 * Math.PI / data.games.length;
+    if(data.speed <= 0) {
+        data.speed = 0;
+        window.clearInterval(data.spinInterval);
+        data.spinning = false;
+    }
+
+console.debug(data.speed);
+    var canvas = document.getElementById('wheel');
+    drawWheel(canvas);
 }
 
 $(document).ready(function() {
     var canvas = document.getElementById('wheel');
+
+    $(canvas).click(function() {
+        if(!data.spinning) {
+            data.spinning = true;
+            data.speed = (Math.random() + 1) * 2 * Math.PI;
+            data.spinInterval = window.setInterval(update, 1000/60) // every 1/60 seconds
+        }
+    });
+
     drawWheel(canvas);
 });
