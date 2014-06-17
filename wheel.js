@@ -1,4 +1,12 @@
 var data = {
+    games2: [
+        "Yup, Sounds Good, Ill go Along with that",
+        "Slow Mo Commentary",
+        "Secret Wants",
+        "Props",
+        "Foreign Film",
+        "Story Tell Die"
+        ],
     games: [
         "Yup, Sounds Good, Ill go Along with that",
         "Slow Mo Commentary",
@@ -78,14 +86,27 @@ var data = {
         "DVD Review",
         "Make a Story",
     ],
-    width: 1000,
-    height: 1000,
+    width: 800,
+    height: 800,
     angleOffset: 0,
     speed: 0,
     colours: ["orange", "red", "yellow", "aqua", "fuchsia","lime"],
     spinning: false,
     spinInterval: 0,
 };
+
+function drawWinner(canvas, winner) {
+    if(canvas.getContext) {
+        var ctx = canvas.getContext('2d');
+        ctx.font = "16pt Arial";
+        var txtSize = ctx.measureText(winner);
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(data.width / 2 - txtSize.width, data.width / 2 + 50, txtSize.width * 2, 100);
+        ctx.fillStyle = "white";
+        ctx.fillText(winner, data.width / 2 - txtSize.width / 2, data.width / 2 + 100);
+    }
+}
 
 function drawWheel(canvas) {
     if(canvas.getContext) {
@@ -126,21 +147,59 @@ function drawWheel(canvas) {
         }
 
         ctx.restore();
+        ctx.beginPath();
+        // arrow on top
+        //ctx.moveTo(radius - 10, 0);
+        //ctx.lineTo(radius + 10, 0);
+        //ctx.lineTo(radius, 10);
+
+        // arrow on right
+        ctx.moveTo(2*radius, radius - 10);
+        ctx.lineTo(2*radius, radius + 10);
+        ctx.lineTo(2*radius - 10, radius);
+        ctx.fill();
     }
 }
 
+function spin3() {
+    data.speed = 2 * Math.PI;
+}
+
+function spin2() {
+    data.speed = Math.PI;
+}
+
+function spin1() {
+    data.speed = Math.PI / 2;
+}
+
+function spin0() {
+    data.speed = 0;
+}
+
 function update() {
-    data.angleOffset += data.speed;
-    data.speed -= Math.random() * 5 * 2 * Math.PI / data.games.length;
+    var index = 0;
+    var canvas = document.getElementById('wheel');
+
+    data.angleOffset += data.speed / 60;
+    data.angleOffset %= 2 * Math.PI;
+
     if(data.speed <= 0) {
         data.speed = 0;
         window.clearInterval(data.spinInterval);
         data.spinning = false;
+
+        console.debug(data.angleOffset);
+        index = data.games.length - 1 - Math.floor((data.angleOffset / (2*Math.PI)) * data.games.length);
+        console.debug(index);
+        console.debug(data.games[index]);
     }
 
-console.debug(data.speed);
-    var canvas = document.getElementById('wheel');
     drawWheel(canvas);
+
+    if(!data.spinning) {
+        drawWinner(canvas, data.games[index]);
+    }
 }
 
 $(document).ready(function() {
@@ -149,8 +208,12 @@ $(document).ready(function() {
     $(canvas).click(function() {
         if(!data.spinning) {
             data.spinning = true;
-            data.speed = (Math.random() + 1) * 2 * Math.PI;
+            data.speed = (Math.random() + 1) * 4 * Math.PI;
             data.spinInterval = window.setInterval(update, 1000/60) // every 1/60 seconds
+            window.setTimeout(spin3, 1000);
+            window.setTimeout(spin2, 2000);
+            window.setTimeout(spin1, 3000);
+            window.setTimeout(spin0, 4000);
         }
     });
 
