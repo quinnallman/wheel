@@ -43,7 +43,9 @@ var data = {
         "Dead Actor",
         "Death in a Scene",
         "Standrup",
-        "Addictions or Superhero Funeral or Graduation",
+        "Addictions",
+        "Superhero Funeral",
+        "Graduation",
         "Puppets",
         "Scene Three Ways",
         "Emotional Stunt Double",
@@ -102,7 +104,7 @@ function drawWinner(canvas, winner) {
         var txtSize = ctx.measureText(winner);
 
         ctx.fillStyle = "black";
-        ctx.fillRect(data.width / 2 - txtSize.width, data.width / 2 + 50, txtSize.width * 2, 100);
+        ctx.fillRect(data.width / 2 - txtSize.width / 2 - 25, data.width / 2 + 75, txtSize.width + 50, 35);
         ctx.fillStyle = "white";
         ctx.fillText(winner, data.width / 2 - txtSize.width / 2, data.width / 2 + 100);
     }
@@ -154,6 +156,7 @@ function drawWheel(canvas) {
         //ctx.lineTo(radius, 10);
 
         // arrow on right
+        ctx.fillStyle = "black";
         ctx.moveTo(2*radius, radius - 10);
         ctx.lineTo(2*radius, radius + 10);
         ctx.lineTo(2*radius - 10, radius);
@@ -210,10 +213,10 @@ $(document).ready(function() {
             data.spinning = true;
             data.speed = (Math.random() + 1) * 4 * Math.PI;
             data.spinInterval = window.setInterval(update, 1000/60) // every 1/60 seconds
-            window.setTimeout(spin3, 1000);
-            window.setTimeout(spin2, 2000);
-            window.setTimeout(spin1, 3000);
-            window.setTimeout(spin0, 4000);
+            window.setTimeout(spin3, 2000);
+            window.setTimeout(spin2, 3000);
+            window.setTimeout(spin1, 4000);
+            window.setTimeout(spin0, 5000);
         }
     });
 
